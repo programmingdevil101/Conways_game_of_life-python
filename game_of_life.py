@@ -1,8 +1,14 @@
 from copy import deepcopy
 import time
 import random
+import pygame
+pygame.init()
 
 
+HEIGHT = 400
+WIDTH = 400
+Black = (0, 0, 0)
+White = (255, 255, 255)
 DEAD = 0
 ALIVE = 1
 
@@ -62,8 +68,7 @@ def next_state(current_state):
 				neighbors.append(current_state[bottom_i][j])
 
 			no_of_alive_neighbors = neighbors.count(1)
-			print(f"{no_of_alive_neighbors} - {neighbors}")
-
+			
 			# FOR LIVE CELL
 			if current_state[i][j] == 1:
 				if no_of_alive_neighbors not in (2, 3):
@@ -76,7 +81,7 @@ def next_state(current_state):
 
 	return (next_state)
 
-
+# ---- TODO: MAKE A NEW RENDER FUNCTION THAT DOESNOT USE TERMINAL
 def render(state):
 	display = {
 		DEAD: ' ',
@@ -92,6 +97,42 @@ def render(state):
 	ren = "\n".join(lines)
 	print(ren)
 
+
+def render_with_pygame(state):
+	screen = pygame.display.set_mode((HEIGHT, WIDTH))
+	pygame.display.set_caption("Conway's game of life")
+	screen.fill(White)
+	run = True
+	new_state = state
+	while run:
+		drawGrid(new_state, screen)
+		new_state = next_state(new_state)
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				run = False
+				
+		pygame.display.update()
+
+
+
+def drawGrid(state, screen):
+	no_of_row = len(state)
+	no_of_col = len(state[0])
+	cell_width = WIDTH//no_of_col
+	cell_Height = HEIGHT//no_of_row
+
+	for x in range(no_of_row):
+		for y in range(no_of_col):
+			rect = pygame.Rect(x*cell_width, y*cell_width, cell_width, cell_Height)
+			if state[x][y] == 1:
+				#pygame.draw.line(screen, Black, (x, y), (2*x, 2*y))
+				#print(rect)
+				pygame.draw.rect(screen, Black, rect, 1)
+			else:
+				pygame.draw.rect(screen, White, rect, 1)
+
+
+
 def loop(init_state):
 	state = init_state
 	while True:
@@ -99,6 +140,8 @@ def loop(init_state):
 		state = next_state(state)
 		time.sleep(0.03)
 
-if __name__ == "__main__":
-	init_state = random_state(100, 50)
-	loop(init_state)
+# keep rows and column atmost 400 as avove that will make cell height and width 0 due to floor division
+init_state = random_state(200, 200)
+render_with_pygame(init_state)
+pygame.quit()
+#loop(init_state)
