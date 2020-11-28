@@ -7,6 +7,25 @@ DEAD = 0
 ALIVE = 1
 
 
+def dead_state(height, width):
+	return [[DEAD for _ in range(width)] for _ in range(height)]
+
+
+def random_state(height, width):
+	state = dead_state(height, width)
+
+	for i in range(height):
+		for j in range(width):
+			num = random.random()
+			alive_to_dead = 0.65
+			cell = 0
+			if num<=alive_to_dead:
+				cell = ALIVE
+			else:
+				cell = DEAD
+			state[i][j] = cell
+	return state
+
 
 def next_state(current_state):
 	next_state = deepcopy(current_state)
