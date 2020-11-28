@@ -75,3 +75,30 @@ def next_state(current_state):
 					next_state[i][j] = 1
 
 	return (next_state)
+
+
+def render(state):
+	display = {
+		DEAD: ' ',
+		ALIVE: u"\u2588"
+	}
+
+	lines = []
+	for x in range(len(state)):
+		line = ''
+		for y in range(len(state[0])):
+			line+=display[state[x][y]]*2
+		lines.append(line)
+	ren = "\n".join(lines)
+	print(ren)
+
+def loop(init_state):
+	state = init_state
+	while True:
+		render(state)
+		state = next_state(state)
+		time.sleep(0.03)
+
+if __name__ == "__main__":
+	init_state = random_state(100, 50)
+	loop(init_state)
